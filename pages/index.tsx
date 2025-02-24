@@ -3,7 +3,7 @@ import styles from "@/styles/Home.module.css";
 import { Alert, AlertColor, AlertTitle, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputAdornment, Skeleton, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import { Delete, Edit, Search } from "@mui/icons-material";
 import { useEffect, useState } from "react";
-import { del, get, put } from '@/utils/networkUtils';
+import { deleteUser, editUser, getUsers } from '@/utils/userService';
 import moment from "moment";
 import { DateField, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -28,13 +28,10 @@ export default function Home() {
 
   function load(filter: string | undefined) {
     setLoading(true)
-    get(`users?${(filter !== undefined && filter.trim() !== '') ? `filter=${filter}&` : ''}page=1&pageSize=100`)
+    getUsers(filter, manageError)
     .then(response => {
-      setRows(response.data.results)
+      setRows(response.results)
       setLoading(false)
-    })
-    .catch(err => {
-      manageError(err)
     })
   }
 
@@ -53,7 +50,7 @@ export default function Home() {
     setDeletePersona(undefined)
   }
   function eliminaPersona() {
-    del(`users/${deletePersona?.id}`)
+    deleteUser(deletePersona?.id, manageError)
     .then(_ => {
       load(filter)
     })
@@ -62,9 +59,6 @@ export default function Home() {
       setAlertTitle('Eliminazione avvenuta con successo')
       setAlertContent(`La persona ${deletePersona?.firstName} ${deletePersona?.lastName} è stata eliminata con successo`)
       closeDeleteDialog()
-    })
-    .catch(err => {
-      manageError(err)
     })
   }
 
@@ -79,18 +73,15 @@ export default function Home() {
   }
   function modificaPersona() {
     console.log(modifyPersona)
-    put(`users/${modifyPersona?.id}`, modifyPersona)
-    .then(response => {
+    editUser(modifyPersona?.id, modifyPersona, manageError)
+    .then(_ => {
       load(filter)
     })
-    .then(response => {
+    .then(_ => {
       setAlertType('success')
       setAlertTitle('Modifica avvenuta con successo')
       setAlertContent(`La persona ${modifyPersona?.firstName} ${modifyPersona?.lastName} è stata modificata con successo`)
       closeModifyDialog()
-    })
-    .catch(err => {
-      manageError(err)
     })
   }
   function modificaNomePersona(value: string) {
