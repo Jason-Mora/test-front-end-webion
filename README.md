@@ -7,7 +7,7 @@ npm install
 ## Esecuzione
 Eseguire il comando per il deploy del server nella cartella principale del progetto:
 ```bash
-npm run start
+npm run dev
 ```
 Aprire [http://localhost:3000](http://localhost:3000) con il browser per utilizzare l'applicativo.
 
