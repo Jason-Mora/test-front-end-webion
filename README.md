@@ -23,7 +23,7 @@ Le api vengono gestite dalla libreria userService.ts che contiene un insieme di 
 Ogni funzione per effettuare le chimate get, put e delete utilizza i metodi della libreria networkUtils.ts che si occupa di centralizzare la gestione delle richieste dirette alle api con la libreria axios.
 ### Applicativo
 Per quanto riguarda l'implementazione della pagina richiesta le scelte degne di attenzione riguardano i seguenti punti:
-- scelta tabella -> La tipologia di tabella scelta è stata quella formata dai componenti TableContainer, Table, TableHade, TableBody, TableRow e TableCell della libreria MUI in quanto ritenuta più adatta all'implementazione della schermata vista la semplicità della stessa e la necessita di avere una versione differente delle righe nella vista mobile.
-- brekpoint monbile -> il breakpoint mobile è stato fissato per una larghezza dello schermo di 768px
+- scelta tabella -> La tipologia di tabella scelta è stata quella formata dai componenti TableContainer, Table, TableHead, TableBody, TableRow e TableCell della libreria MUI in quanto ritenuta più adatta all'implementazione della schermata vista la semplicità della stessa e la necessita di avere una versione differente delle righe nella vista mobile.
+- brekpoint -> il breakpoint mobile è stato fissato per una larghezza dello schermo di 768px
 - visualizzazione errori/operazioni concluse -> le informazioni da fornire all'utente, che siano errori o stati di operazioni, vengono date tramite l'uso di Alert a scomparsa.
 - caricamento -> lo stato di caricamento è implementato tramite una variabile di stato. Se questa ha coma valore true viene visualizzata un anteprima di caricamento della tabella tramite dei componenti Skeleton, altimenti la schermata come prevista
