@@ -28,10 +28,14 @@ export default function Home() {
 
   function load(filter: string | undefined) {
     setLoading(true)
-    getUsers(filter, manageError)
+    getUsers(filter)
     .then(response => {
       setRows(response.results)
       setLoading(false)
+    })
+    .catch(err => {
+      manageError(err)
+      setRows([])
     })
   }
 
@@ -50,7 +54,7 @@ export default function Home() {
     setDeletePersona(undefined)
   }
   function eliminaPersona() {
-    deleteUser(deletePersona?.id, manageError)
+    deleteUser(deletePersona?.id)
     .then(_ => {
       load(filter)
     })
@@ -58,6 +62,10 @@ export default function Home() {
       setAlertType('success')
       setAlertTitle('Eliminazione avvenuta con successo')
       setAlertContent(`La persona ${deletePersona?.firstName} ${deletePersona?.lastName} è stata eliminata con successo`)
+      closeDeleteDialog()
+    })
+    .catch(err => {
+      manageError(err)
       closeDeleteDialog()
     })
   }
@@ -73,7 +81,7 @@ export default function Home() {
   }
   function modificaPersona() {
     console.log(modifyPersona)
-    editUser(modifyPersona?.id, modifyPersona, manageError)
+    editUser(modifyPersona?.id, modifyPersona)
     .then(_ => {
       load(filter)
     })
@@ -81,6 +89,10 @@ export default function Home() {
       setAlertType('success')
       setAlertTitle('Modifica avvenuta con successo')
       setAlertContent(`La persona ${modifyPersona?.firstName} ${modifyPersona?.lastName} è stata modificata con successo`)
+      closeModifyDialog()
+    })
+    .catch(err => {
+      manageError(err)
       closeModifyDialog()
     })
   }
