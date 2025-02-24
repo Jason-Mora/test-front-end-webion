@@ -151,166 +151,168 @@ export default function Home() {
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
 
       </Head>
-      <div className={styles.page} >
-        {/* MESSAGGI ALERT */}
-        <Snackbar open={alertType !== undefined}
-          anchorOrigin={{vertical: 'top', horizontal: 'center'}}
-          autoHideDuration={5000}
-          onClose={_ => {
-            setAlertType(undefined)
-            setAlertTitle(undefined)
-            setAlertContent(undefined)
-          }}
-        >
-          <Alert severity={alertType} variant="filled">
-            <AlertTitle>{alertTitle}</AlertTitle>
-            {alertContent}
-          </Alert>
-        </Snackbar>
-        {/* DIALOG ELIMINA PERSONA */}
-        <Dialog open={deleteDialogState} maxWidth='xs' fullWidth>
-          <DialogTitle>Elimina persona</DialogTitle>
-          <DialogContent>Sei sicuro di voler eliminare la persona <b>{deletePersona?.firstName} {deletePersona?.lastName}</b>?</DialogContent>
-          <DialogActions>
-            <Button variant="text" onClick={closeDeleteDialog}>Annulla</Button>
-            <Button variant="contained" color='error' onClick={_ => eliminaPersona()}>Elimina</Button>
-          </DialogActions>
-        </Dialog>
-        {/* DIALOG MODIFICA PERSONA */}
-        <Dialog open={modifyDialogState} maxWidth='xs' fullWidth>
-          <DialogTitle>Modifica persona</DialogTitle>
-          <DialogContent>
-            <Typography className={styles.dialog_label}>Nome</Typography>
-            <TextField className={styles.dialog_field} size="small" fullWidth value={modifyPersona?.firstName} onChange={e => modificaNomePersona(e.target.value)}/>
-            <Typography className={styles.dialog_label}>Cognome</Typography>
-            <TextField className={styles.dialog_field} size="small" fullWidth value={modifyPersona?.lastName} onChange={e => modificaCognomePersona(e.target.value)}/>
-            <Typography className={styles.dialog_label}>Data di nascita</Typography>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DateField
-                label="Controlled field"
-                defaultValue={dayjs(modifyPersona?.birthDate)}
-                format="DD/MM/YYYY"
-                onChange={(val) => modificaDataNascitaPersona(val)}
-              />
-            </LocalizationProvider>
-          </DialogContent>
-          <DialogActions>
-            <Button variant="text" onClick={closeModifyDialog}>Annulla</Button>
-            <Button variant="contained" color='info' onClick={_ => modificaPersona()}>Modifica</Button>
-          </DialogActions>
-        </Dialog>
-        <Typography>Persone</Typography>
-        <TextField placeholder="Cerca" fullWidth slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search />
-                </InputAdornment>
-              ),
-            },
-          }}
-          value={filter}
-          onChange={e => setFilter(e.target.value)}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '8px'
-            }
-          }}
-          size='small'
-        />
-        
-        <TableContainer className={styles.table_container}>
-          <Table>
-            <TableHead>
-              <TableRow className={styles.table_header}>
-                <TableCell align="left" width={300}>Id</TableCell>
-                <TableCell align="left" width={300}>Nome</TableCell>
-                <TableCell align="left" width={300}>Cognome</TableCell>
-                <TableCell align="left">Data di nascita</TableCell>
-                <TableCell align="left" width={80}></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody className={styles.table_body}>
-              {loading &&
-                <>
-                  <TableRow className={styles.skeleton_row}>
-                    <TableCell><Skeleton variant="rectangular"/><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><hr/><Skeleton variant="rectangular"/><Skeleton variant="rectangular"/></TableCell>
-                  </TableRow>
-                  <TableRow className={styles.skeleton_row_desktop}>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                  </TableRow>
-                  <TableRow className={styles.skeleton_row_desktop}>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                  </TableRow>
-                  <TableRow className={styles.skeleton_row_desktop}>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                  </TableRow>
-                  <TableRow className={styles.skeleton_row_desktop}>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                    <TableCell><Skeleton variant="rectangular"/></TableCell>
-                  </TableRow>
-                </> 
-              }
-              {!loading && rows?.length > 0 ?
-                rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    className={styles.table_row}
-                  >
-                    <TableCell align="left"><Typography>ID</Typography>{row.id}</TableCell>
-                    <TableCell align="left" className={styles.no_mobile}>{row.firstName}</TableCell>
-                    <TableCell align="left" className={styles.no_mobile}>{row.lastName}</TableCell>
-                    <TableCell align="left"><Typography>DATA DI NASCITA</Typography>{moment(row.birthDate, 'YYYY-MM-DD').format('DD/MM/YYYY')}</TableCell>
-                    <TableCell align="left" className={styles.mobile}><Typography>NOME</Typography>{row.firstName}</TableCell>
-                    <TableCell align="left" className={styles.mobile}><Typography>COGNOME</Typography>{row.lastName}</TableCell>
-                    <TableCell align="left" className={styles.table_actions}>
-                      <hr/>
-                      <Stack direction={"row"}>
-                        <IconButton
-                          onClick={_ => openModifyDialog(row)}
-                        >
-                          <Edit />
-                        </IconButton>
-                        <IconButton
-                          onClick={_ => openDeleteDialog(row)}
-                        >
-                          <Delete />
-                        </IconButton>
-                      </Stack>
-                    </TableCell>
-                  </TableRow>
-                ))
-                :
-                !loading && <>
-                  <TableRow
-                    className={`${styles.table_row} ${styles.table_row_empty}`}>
-                    <TableCell colSpan={5} height={300} align="center">Nessuna persona presente</TableCell>
-                  </TableRow>
-                </>
-              }
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
+	  <div className={styles.container}>
+		  <div className={styles.page} >
+			{/* MESSAGGI ALERT */}
+			<Snackbar open={alertType !== undefined}
+			  anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+			  autoHideDuration={5000}
+			  onClose={_ => {
+				setAlertType(undefined)
+				setAlertTitle(undefined)
+				setAlertContent(undefined)
+			  }}
+			>
+			  <Alert severity={alertType} variant="filled">
+				<AlertTitle>{alertTitle}</AlertTitle>
+				{alertContent}
+			  </Alert>
+			</Snackbar>
+			{/* DIALOG ELIMINA PERSONA */}
+			<Dialog open={deleteDialogState} maxWidth='xs' fullWidth>
+			  <DialogTitle>Elimina persona</DialogTitle>
+			  <DialogContent>Sei sicuro di voler eliminare la persona <b>{deletePersona?.firstName} {deletePersona?.lastName}</b>?</DialogContent>
+			  <DialogActions>
+				<Button variant="text" onClick={closeDeleteDialog}>Annulla</Button>
+				<Button variant="contained" color='error' onClick={_ => eliminaPersona()}>Elimina</Button>
+			  </DialogActions>
+			</Dialog>
+			{/* DIALOG MODIFICA PERSONA */}
+			<Dialog open={modifyDialogState} maxWidth='xs' fullWidth>
+			  <DialogTitle>Modifica persona</DialogTitle>
+			  <DialogContent>
+				<Typography className={styles.dialog_label}>Nome</Typography>
+				<TextField className={styles.dialog_field} size="small" fullWidth value={modifyPersona?.firstName} onChange={e => modificaNomePersona(e.target.value)}/>
+				<Typography className={styles.dialog_label}>Cognome</Typography>
+				<TextField className={styles.dialog_field} size="small" fullWidth value={modifyPersona?.lastName} onChange={e => modificaCognomePersona(e.target.value)}/>
+				<Typography className={styles.dialog_label}>Data di nascita</Typography>
+				<LocalizationProvider dateAdapter={AdapterDayjs}>
+				  <DateField
+					label="Controlled field"
+					defaultValue={dayjs(modifyPersona?.birthDate)}
+					format="DD/MM/YYYY"
+					onChange={(val) => modificaDataNascitaPersona(val)}
+				  />
+				</LocalizationProvider>
+			  </DialogContent>
+			  <DialogActions>
+				<Button variant="text" onClick={closeModifyDialog}>Annulla</Button>
+				<Button variant="contained" color='info' onClick={_ => modificaPersona()}>Modifica</Button>
+			  </DialogActions>
+			</Dialog>
+			<Typography>Persone</Typography>
+			<TextField placeholder="Cerca" fullWidth slotProps={{
+				input: {
+				  startAdornment: (
+					<InputAdornment position="start">
+					  <Search />
+					</InputAdornment>
+				  ),
+				},
+			  }}
+			  value={filter}
+			  onChange={e => setFilter(e.target.value)}
+			  sx={{
+				'& .MuiOutlinedInput-root': {
+				  borderRadius: '8px'
+				}
+			  }}
+			  size='small'
+			/>
+			
+			<TableContainer className={styles.table_container}>
+			  <Table>
+				<TableHead>
+				  <TableRow className={styles.table_header}>
+					<TableCell align="left" width={300}>Id</TableCell>
+					<TableCell align="left" width={300}>Nome</TableCell>
+					<TableCell align="left" width={300}>Cognome</TableCell>
+					<TableCell align="left">Data di nascita</TableCell>
+					<TableCell align="left" width={80}></TableCell>
+				  </TableRow>
+				</TableHead>
+				<TableBody className={styles.table_body}>
+				  {loading &&
+					<>
+					  <TableRow className={styles.skeleton_row}>
+						<TableCell><Skeleton variant="rectangular"/><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><hr/><Skeleton variant="rectangular"/><Skeleton variant="rectangular"/></TableCell>
+					  </TableRow>
+					  <TableRow className={styles.skeleton_row_desktop}>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+					  </TableRow>
+					  <TableRow className={styles.skeleton_row_desktop}>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+					  </TableRow>
+					  <TableRow className={styles.skeleton_row_desktop}>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+					  </TableRow>
+					  <TableRow className={styles.skeleton_row_desktop}>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+						<TableCell><Skeleton variant="rectangular"/></TableCell>
+					  </TableRow>
+					</> 
+				  }
+				  {!loading && rows?.length > 0 ?
+					rows.map((row) => (
+					  <TableRow
+						key={row.id}
+						className={styles.table_row}
+					  >
+						<TableCell align="left"><Typography>ID</Typography>{row.id}</TableCell>
+						<TableCell align="left" className={styles.no_mobile}>{row.firstName}</TableCell>
+						<TableCell align="left" className={styles.no_mobile}>{row.lastName}</TableCell>
+						<TableCell align="left"><Typography>DATA DI NASCITA</Typography>{moment(row.birthDate, 'YYYY-MM-DD').format('DD/MM/YYYY')}</TableCell>
+						<TableCell align="left" className={styles.mobile}><Typography>NOME</Typography>{row.firstName}</TableCell>
+						<TableCell align="left" className={styles.mobile}><Typography>COGNOME</Typography>{row.lastName}</TableCell>
+						<TableCell align="left" className={styles.table_actions}>
+						  <hr/>
+						  <Stack direction={"row"}>
+							<IconButton
+							  onClick={_ => openModifyDialog(row)}
+							>
+							  <Edit />
+							</IconButton>
+							<IconButton
+							  onClick={_ => openDeleteDialog(row)}
+							>
+							  <Delete />
+							</IconButton>
+						  </Stack>
+						</TableCell>
+					  </TableRow>
+					))
+					:
+					!loading && <>
+					  <TableRow
+						className={`${styles.table_row} ${styles.table_row_empty}`}>
+						<TableCell colSpan={5} height={300} align="center">Nessuna persona presente</TableCell>
+					  </TableRow>
+					</>
+				  }
+				</TableBody>
+			  </Table>
+			</TableContainer>
+		  </div>
+	    </div>
     </>
   );
 }
